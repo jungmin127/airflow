@@ -14,7 +14,7 @@ with DAG(
     regist_t1 = PythonOperator(
         task_id='regist_t1',
         python_callable=regist,
-        op_args=['hjkim','man','kr','seoul']
+        op_args=['strawfev','man','kr','seoul']
     )
 
     regist_t1
