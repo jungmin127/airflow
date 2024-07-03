@@ -14,7 +14,7 @@ with DAG(
         env={'START_DATE':'{{ data_interval_start.in_timezone("Asia/Seoul") | ds }}',
              'END_DATE':'{{ (data_interval_end.in_timezone("Asia/Seoul") - macros.dateutil.relativedelta.relativedelta(days=1)) | ds }}'
         },
-        bash_commnad='echo "START_DATE: $START_DATE" && echo "END_DATE: $END_DATE"' 
+        bash_command='echo "START_DATE: $START_DATE" && echo "END_DATE: $END_DATE"' 
     )
 
     #strat_date 에 .in_timezone 을 붙이는 이유 -> 기본은 UTC 이기 때문에 수정필요
