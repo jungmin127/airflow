@@ -23,21 +23,24 @@ def define_crypto(crypto, to_date, count):
         raise
 
 def get_solar_prices():
-    crypto = 'KRW-SOL'
-    to_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    count = 5
-    df = define_crypto(crypto, to_date, count)
-    # 로그에 데이터프레임 출력 (테스트용)
-    if df is not None:
-        logging.info(df.head())
-    else:
-        logging.warning("No data fetched.")
+    try:
+        crypto = 'KRW-SOL'
+        to_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        count = 5
+        df = define_crypto(crypto, to_date, count)
+        if df is not None:
+            logging.info(df.head())
+        else:
+            logging.warning("No data fetched.")
+    except Exception as e:
+        logging.error(f"Error in get_solar_prices: {e}")
+        raise
 
 # DAG 설정
 with DAG(
     dag_id='dags_upbit_test_1',
     schedule_interval='*/1 * * * *',  # 1분마다 실행
-    start_date=pendulum.datetime(2024, 8, 4, tz='Asia/Seoul'),  # 시작일
+    start_date=pendulum.datetime(2024, 8, 5, tz='Asia/Seoul'),  # 시작일
     catchup=False,  # 과거 날짜의 실행을 건너뛰도록 설정
 ) as dag:
 
