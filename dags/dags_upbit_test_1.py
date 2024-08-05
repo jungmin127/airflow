@@ -47,7 +47,7 @@ with DAG(
     dag_id='dags_upbit_test_1',
     default_args=default_args,  # 전체 DAG에 대한 기본 인자 설정
     schedule_interval='*/1 * * * *',  # 1분마다 실행
-    start_date=pendulum.datetime(2024, 8, 54, tz='Asia/Seoul'),  # 시작일
+    start_date=pendulum.datetime(2024, 8, 5, tz='Asia/Seoul'),  # 시작일
     catchup=False,  # 과거 날짜의 실행을 건너뛰도록 설정
 ) as dag:
 
