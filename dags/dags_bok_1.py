@@ -16,7 +16,7 @@ with DAG(
     bok_kospi_info = HttpOperator(
         task_id='bok_test_1',
         http_conn_id='bok_api',
-        endpoint='{{var.value.apikey_openapi_bok}}/json/kr/1/2000/802Y001/D/20240101/20240731/0001000',
+        endpoint='api/StatisticSearch/{{var.value.apikey_openapi_bok}}/json/kr/1/2000/802Y001/D/20240101/20240731/0001000',
         method='GET',
         headers={'Content-Type': 'application/json',
                         'charset': 'utf-8',
