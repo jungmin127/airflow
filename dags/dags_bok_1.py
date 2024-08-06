@@ -1,6 +1,7 @@
 from airflow import DAG
 from airflow.operators.bash import BashOperator
-from airflow.providers.http.operators.http import SimpleHttpOperator
+#from airflow.providers.http.operators.http import SimpleHttpOperator
+from airflow.providers.http.operators.http import HttpOperator
 from airflow.decorators import task
 import pendulum
 
@@ -12,9 +13,9 @@ with DAG(
 ) as dag:
     
     '''한국은행경제통계시스템'''
-    bok_kospi_info = SimpleHttpOperator(
+    bok_kospi_info = HttpOperator(
         task_id='bok_test_1',
-        http_conn_id='ecos.bok.or.kr/api/StatisticSearch/',
+        http_conn_id='bok_api',
         endpoint='{{var.value.apikey_openapi_bok}}/json/kr/1/2000/802Y001/D/20240101/20240731/0001000',
         method='GET',
         headers={'Content-Type': 'application/json',
