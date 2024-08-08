@@ -5,7 +5,7 @@ import pendulum
 import os
 
 # 디렉토리 경로 설정
-directory_path = '/opt/***/files/kospi_value/'
+directory_path = '/opt/airflow/files/kospi_value/'
 
 # 디렉토리가 없는 경우 생성
 if not os.path.exists(directory_path):
