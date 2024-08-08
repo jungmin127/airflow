@@ -45,7 +45,7 @@ class BokKospiToDataFrameOperator(BaseOperator):
         if response.status_code == 200:
             contents = json.loads(response.text)
             key_nm = list(contents.keys())[0]
-            return contents[key_nm]
+            return contents[key_nm]['row'][0]
         else:
             self.log.error(f"API 호출 실패. Status code: {response.status_code}")
             return []
