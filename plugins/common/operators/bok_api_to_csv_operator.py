@@ -23,6 +23,13 @@ class BokKospiToDataFrameOperator(BaseOperator):
 
         # 데이터프레임 생성
         df = pd.DataFrame(kospi_data)
+        
+        import os
+        # 디렉토리 경로 설정
+        directory_path = '/opt/airflow/files/kospi_value/'
+        # 디렉토리가 없는 경우 생성
+        if not os.path.exists(directory_path):
+            os.makedirs(directory_path)
 
         # CSV 파일로 저장
         file_path = f"{self.path}/{self.file_name}"

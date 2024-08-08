@@ -2,15 +2,6 @@ from common.operators.bok_api_to_csv_operator import BokKospiToDataFrameOperator
 from airflow import DAG
 import pendulum
 
-import os
-
-# 디렉토리 경로 설정
-directory_path = '/opt/airflow/files/kospi_value/'
-
-# 디렉토리가 없는 경우 생성
-if not os.path.exists(directory_path):
-    os.makedirs(directory_path)
-
 with DAG(
     dag_id='dags_bok_api_kospi',
     schedule='0 20 * * *',
