@@ -15,11 +15,11 @@ class BokKospiToDataFrameOperator(BaseOperator):
         self.file_name = file_name
 
     def execute(self, context):
-        # start_date를 기준으로 하루 전 날짜 계산
-        execution_date = context['execution_date']
-        startdate = (execution_date - timedelta(days=1)).strftime('%Y%m%d')
+        execution_date = context['execution_date'] #수동 트리거 > 트리거 된 시점의 날짜 / 스케쥴러 트리거 > 스케쥴 시점의 날짜
+        days_back = 4 #4일 전 값부터 불러옴
+        startdate = (execution_date - timedelta(days=days_back)).strftime('%Y%m%d')
         enddate = execution_date.strftime('%Y%m%d')
-
+        
         # API 호출
         kospi_data = self._call_api(startdate, enddate)
 
