@@ -15,11 +15,13 @@ class BokKospiToDataFrameOperator(BaseOperator):
         self.file_name = file_name
 
     def execute(self, context):
-        # 현재 날짜 구하기
-        today = datetime.now().strftime('%Y%m%d')
+        # start_date를 기준으로 하루 전 날짜 계산
+        execution_date = context['execution_date']
+        startdate = (execution_date - timedelta(days=1)).strftime('%Y%m%d')
+        enddate = execution_date.strftime('%Y%m%d')
 
         # API 호출
-        kospi_data = self._call_api(today, today)
+        kospi_data = self._call_api(startdate, enddate)
 
         # 데이터프레임 생성
         df = pd.DataFrame(kospi_data)

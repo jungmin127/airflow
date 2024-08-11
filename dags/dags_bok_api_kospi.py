@@ -5,7 +5,7 @@ import pendulum
 with DAG(
     dag_id='dags_bok_api_kospi',
     schedule='0 20 * * *',
-    start_date=pendulum.datetime(2024,8,11, tz='Asia/Seoul'),
+    start_date=pendulum.datetime(2024,8,8, tz='Asia/Seoul'),
     catchup=False
 ) as dag:
     '''일별 Kospi값'''
