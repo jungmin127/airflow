@@ -11,7 +11,6 @@ with DAG(
     '''일별 Kospi값'''
     kospi_value = BokKospiToDataFrameOperator(
         task_id='kospi_value',
-        #path='/opt/airflow/files/kospi_value/{{ ds_nodash }}',
         path='/opt/airflow/files/kospi_value/',
         file_name='kospi.csv'
     )
