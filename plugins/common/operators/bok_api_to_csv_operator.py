@@ -1,5 +1,5 @@
 from airflow.models.baseoperator import BaseOperator
-from airflow.hooks.base import BaseHook
+from airflow.models import Variable
 import pandas as pd
 import requests
 import json
@@ -37,7 +37,7 @@ class BokKospiToDataFrameOperator(BaseOperator):
         self.log.info(f"데이터프레임을 CSV 파일로 저장: {file_path}")
 
     def _call_api(self, startdate, enddate):
-        connection = BaseHook.get_connection(self.http_conn_id)
+        api_key = Variable.get('apikey_openapi_bok')  # Airflow Variable의 이름
         base_url = f'https://ecos.bok.or.kr/api/StatisticSearch/{{key}}/json/kr/1/500/802Y001/D/{startdate}/{enddate}/0001000'
 
         headers = {
@@ -46,8 +46,7 @@ class BokKospiToDataFrameOperator(BaseOperator):
             'Accept': '*/*'
         }
 
-        url = base_url.format(key=connection.password)  # API key를 적용한 URL 생성
-        response = requests.get(url, headers=headers)
+        response = requests.get(base_url, headers=headers)
 
         self.log.info(f"API 응답 내용: {response.text}")  # 응답 내용을 로깅
 
