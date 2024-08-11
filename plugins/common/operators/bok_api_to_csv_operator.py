@@ -49,8 +49,11 @@ class BokKospiToDataFrameOperator(BaseOperator):
         url = base_url.format(key=connection.password)  # API key를 적용한 URL 생성
         response = requests.get(url, headers=headers)
 
+        self.log.info(f"API 응답 내용: {response.text}")  # 응답 내용을 로깅
+
         if response.status_code == 200:
             contents = json.loads(response.text)
+            self.log.info(f"API 응답 데이터: {contents}")  # 응답 데이터 구조 로깅
             key_nm = list(contents.keys())[0]
             
             if key_nm in contents and 'row' in contents[key_nm]:
