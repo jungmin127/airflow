@@ -38,7 +38,7 @@ class BokKospiToDataFrameOperator(BaseOperator):
 
     def _call_api(self, startdate, enddate):
         api_key = Variable.get('apikey_openapi_bok')  # Airflow Variable의 이름
-        base_url = f'https://ecos.bok.or.kr/api/StatisticSearch/{{key}}/json/kr/1/500/802Y001/D/{startdate}/{enddate}/0001000'
+        base_url = f'https://ecos.bok.or.kr/api/StatisticSearch/{api_key}/json/kr/1/500/802Y001/D/{startdate}/{enddate}/0001000'
 
         headers = {
             'Content-Type': 'application/json',
