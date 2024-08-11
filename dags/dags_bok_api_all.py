@@ -3,7 +3,7 @@ import pendulum
 from common.operators.bok_api_to_csv_features import BokApiToDataFrameOperator
 
 with DAG(
-    dag_id='dags_bok_api_kospi',
+    dag_id='dags_bok_api_all',
     schedule='0 21 * * *',
     start_date=pendulum.datetime(2024,8,8, tz='Asia/Seoul'),
     catchup=False
