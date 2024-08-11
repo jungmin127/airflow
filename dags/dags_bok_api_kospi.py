@@ -5,13 +5,14 @@ import pendulum
 with DAG(
     dag_id='dags_bok_api_kospi',
     schedule='0 20 * * *',
-    start_date=pendulum.datetime(2024,8,7, tz='Asia/Seoul'),
+    start_date=pendulum.datetime(2024,8,11, tz='Asia/Seoul'),
     catchup=False
 ) as dag:
     '''일별 Kospi값'''
     kospi_value = BokKospiToDataFrameOperator(
         task_id='kospi_value',
-        path='/opt/airflow/files/kospi_value/{{ ds_nodash }}',
+        #path='/opt/airflow/files/kospi_value/{{ ds_nodash }}',
+        path='/opt/airflow/files/kospi_value/',
         file_name='kospi.csv'
     )
 
