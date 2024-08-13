@@ -13,15 +13,15 @@ with DAG(
         custom_bok_postgres_hook = CustomBokPostgresHook(postgres_conn_id=postgres_conn_id)
         custom_bok_postgres_hook.bulk_load(table_name=tbl_nm, file_name=file_nm, delimiter=',', is_header=True, is_replace=True)
 
-    insrt_postgres = PythonOperator(
-        task_id='insrt_postgres',
+    insrt_postgres_task1 = PythonOperator(
+        task_id='insrt_postgres_task1',
         python_callable=insrt_postgres,
         op_kwargs={'postgres_conn_id': 'conn-db-postgres-custom',
                    'tbl_nm':'bok_kospi',
                    'file_nm':'/opt/airflow/files/kospi_value/kospi.csv'})
 
-    insrt_postgres = PythonOperator(
-        task_id='insrt_postgres',
+    insrt_postgres_task2 = PythonOperator(
+        task_id='insrt_postgres_task2',
         python_callable=insrt_postgres,
         op_kwargs={'postgres_conn_id': 'conn-db-postgres-custom',
                    'tbl_nm':'bok_koribo12',
