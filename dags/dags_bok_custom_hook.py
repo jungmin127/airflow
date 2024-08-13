@@ -18,5 +18,11 @@ with DAG(
         python_callable=insrt_postgres,
         op_kwargs={'postgres_conn_id': 'conn-db-postgres-custom',
                    'tbl_nm':'bok_kospi',
-                   'file_nm':'/opt/airflow/files/kospi_value/kospi.csv'}
-    )
+                   'file_nm':'/opt/airflow/files/kospi_value/kospi.csv'})
+
+    insrt_postgres = PythonOperator(
+        task_id='insrt_postgres',
+        python_callable=insrt_postgres,
+        op_kwargs={'postgres_conn_id': 'conn-db-postgres-custom',
+                   'tbl_nm':'bok_koribo12',
+                   'file_nm':'/opt/airflow/files/koribo12_value/_koribo12/_koribo12_koribo12.csv'})
