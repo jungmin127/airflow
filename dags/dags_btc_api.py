@@ -13,7 +13,7 @@ with DAG(
     btc_value = BTCtoCSVOperator(
         task_id='btc_value',
         path='/opt/airflow/files/btc/',
-        file_name_template='{name}.csv'
+        file_name_template='btc_{date}.csv'
     )
 
     btc_value
