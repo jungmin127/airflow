@@ -42,7 +42,7 @@ def ml_model(**kwargs):
     print(f'Model Score: {mean_squared_error:.2f}')
 
 with DAG(
-    dag_id='dags_ml_model_training',
+    dag_id='dags_btc_ml',
     start_date=pendulum.datetime(2024, 8, 18, tz='Asia/Seoul'),
     schedule='3 * * * *',
     catchup=False
