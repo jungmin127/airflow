@@ -22,8 +22,8 @@ def ml_model(**kwargs):
             FROM btc \
             GROUP BY 1,2,3,4,5,6"
     df = query_data_from_postgres(postgres_conn_id, query)
-
-    df['candle_date_time_kst'] = pd.to_datetime(df['candle_date_time_kst'], format='%Y-%m-%d %H:%M:%S')
+    
+    df['candle_date_time_kst'] = pd.to_datetime(df['candle_date_time_kst'], format='ISO8601')
     df['year'] = df['candle_date_time_kst'].dt.year
     df['month'] = df['candle_date_time_kst'].dt.month
     df['day'] = df['candle_date_time_kst'].dt.day
@@ -53,4 +53,3 @@ with DAG(
         python_callable=ml_model,
         op_kwargs={'postgres_conn_id': 'conn-db-postgres-custom'}
     )
-    
