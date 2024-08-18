@@ -19,7 +19,7 @@ class BokApiToDataFrameOperator(BaseOperator):
 
     def execute(self, context):
         execution_date = context['execution_date']
-        days_back = 4
+        days_back = 1
         startdate = (execution_date - timedelta(days=days_back)).strftime('%Y%m%d')
         enddate = execution_date.strftime('%Y%m%d')
 
