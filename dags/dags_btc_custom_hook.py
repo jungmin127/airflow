@@ -18,4 +18,4 @@ with DAG(
         python_callable=insrt_postgres,
         op_kwargs={'postgres_conn_id': 'conn-db-postgres-custom',
                    'tbl_nm':'btc',
-                   'file_nm':'/opt/airflow/files/btc/btc_2024-08-18.csv'})
+                   'file_nm':'/opt/airflow/files/btc/btc_data.csv'})

@@ -6,12 +6,12 @@ import os
 from datetime import datetime
 
 class BTCtoCSVOperator(BaseOperator):
-    template_fields = ('path', 'file_name_template')
+    template_fields = ('path', 'file_name')
 
-    def __init__(self, path, file_name_template, **kwargs):
+    def __init__(self, path, file_name, **kwargs):
         super().__init__(**kwargs)
         self.path = path
-        self.file_name_template = file_name_template
+        self.file_name = file_name
 
     def execute(self, context):
         btc_data = self._call_api()
@@ -22,7 +22,7 @@ class BTCtoCSVOperator(BaseOperator):
             if not os.path.exists(directory_path):
                 os.makedirs(directory_path)
 
-            file_path = os.path.join(directory_path, self.file_name_template.format(date=datetime.now().strftime('%Y-%m-%d')))
+            file_path = os.path.join(directory_path, self.file_name)
             df.to_csv(file_path, encoding='utf-8', index=False)
             self.log.info(f"데이터프레임을 CSV 파일로 저장: {file_path}")
         else:
