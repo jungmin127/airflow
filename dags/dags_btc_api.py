@@ -1,6 +1,6 @@
 from airflow import DAG
 import pendulum
-from common.operators.bok_api_to_csv_features import BTCtoCSVOperator
+from common.operators.btc_api_to_csv import BTCtoCSVOperator
 
 with DAG(
     dag_id='dags_btc_api',
