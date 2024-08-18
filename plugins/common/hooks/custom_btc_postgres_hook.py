@@ -38,6 +38,15 @@ class CustomBtcPostgresHook(BaseHook):
 
         file_df = file_df.drop_duplicates()
 
+         # 중복 데이터 확인 후 제거
+        if not is_replace:
+            engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}')
+            with engine.connect() as conn:
+                # 기존 데이터와 중복된 행 필터링
+                existing_data_query = f"SELECT candle_date_time_kst, trade_price FROM {table_name};"
+                existing_data = pd.read_sql(existing_data_query, conn)
+                file_df = file_df[~file_df[['candle_date_time_kst', 'trade_price']].apply(tuple, 1).isin(existing_data.apply(tuple, 1))]
+
         self.log.info('중복 제거 후 적재 건수:' + str(len(file_df)))
         uri = f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}'
         engine = create_engine(uri)

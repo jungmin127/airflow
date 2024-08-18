@@ -6,7 +6,7 @@ from common.hooks.custom_btc_postgres_hook import CustomBtcPostgresHook
 with DAG(
         dag_id='dags_btc_custom_hook',
         start_date=pendulum.datetime(2024,8,18, tz='Asia/Seoul'),
-        schedule='1 * * * *',
+        schedule='2 * * * *',
         catchup=False
 ) as dag:
     def insrt_postgres(postgres_conn_id, tbl_nm, file_nm, **kwargs):
