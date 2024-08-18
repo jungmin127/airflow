@@ -42,7 +42,7 @@ class BTCtoCSVOperator(BaseOperator):
         self.log.info(f"API 응답 내용: {response.text}")
 
         if response.status_code == 200:
-            contents = response.jason()
+            contents = response.json()
             self.log.info(f"API 응답 데이터: {contents}")
             return contents
         else:
