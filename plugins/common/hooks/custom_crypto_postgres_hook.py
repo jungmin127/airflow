@@ -46,7 +46,7 @@ class CustomCryptoPostgresHook(BaseHook):
         self.log.info('테이블 :' + table_name)
         self.get_conn()
         header = 0 if is_header else None
-        if_exists = 'replace' if is_replace else 'append'
+        #if_exists = 'replace' if is_replace else 'append'
         file_df = pd.read_csv(file_name, header=header, delimiter=delimiter)
         file_df = file_df.drop_duplicates()
 
@@ -74,7 +74,7 @@ class CustomCryptoPostgresHook(BaseHook):
             file_df.to_sql(name=table_name,
                                 con=engine,
                                 schema='public',
-                                if_exists=if_exists,
+                                if_exists='append',
                                 index=False
                             )
         else:
