@@ -2,7 +2,7 @@ from airflow.hooks.base import BaseHook
 import psycopg2
 import pandas as pd
 
-class CustomBtcPostgresHook(BaseHook):
+class CustomCryptoPostgresHook(BaseHook):
 
     def __init__(self, postgres_conn_id, **kwargs):
         self.postgres_conn_id = postgres_conn_id
@@ -38,7 +38,6 @@ class CustomBtcPostgresHook(BaseHook):
 
         file_df = file_df.drop_duplicates()
 
-         # 중복 데이터 확인 후 제거
         if not is_replace:
             engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}')
             with engine.connect() as conn:
