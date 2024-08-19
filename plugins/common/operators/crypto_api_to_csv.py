@@ -18,6 +18,7 @@ class CryptoToCSVOperator(BaseOperator):
         data = self._call_api()
         if data:
             df = pd.DataFrame(data)
+            df = df.drop_duplicates(subset=['candle_date_time_kst'])
             
             directory_path = os.path.join(self.path)
             if not os.path.exists(directory_path):
