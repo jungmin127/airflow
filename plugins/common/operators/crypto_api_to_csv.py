@@ -5,18 +5,19 @@ import json
 import os
 from datetime import datetime
 
-class BTCtoCSVOperator(BaseOperator):
-    template_fields = ('path', 'file_name')
+class CryptoToCSVOperator(BaseOperator):
+    template_fields = ('path', 'file_name', 'market')
 
-    def __init__(self, path, file_name, **kwargs):
+    def __init__(self, path, file_name, market, **kwargs):
         super().__init__(**kwargs)
         self.path = path
         self.file_name = file_name
+        self.market = market
 
     def execute(self, context):
-        btc_data = self._call_api()
-        if btc_data:
-            df = pd.DataFrame(btc_data)
+        data = self._call_api()
+        if data:
+            df = pd.DataFrame(data)
             
             directory_path = os.path.join(self.path)
             if not os.path.exists(directory_path):
@@ -29,7 +30,7 @@ class BTCtoCSVOperator(BaseOperator):
             self.log.error('API 호출 결과가 없음')
 
     def _call_api(self):
-        base_url = f'https://api.upbit.com/v1/candles/minutes/60?market=KRW-BTC&count=200'
+        base_url = f'https://api.upbit.com/v1/candles/minutes/60?market={self.market}&count=200'
 
         headers = {
             'Content-Type': 'application/json',
