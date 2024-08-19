@@ -69,11 +69,15 @@ class CustomCryptoPostgresHook(BaseHook):
                 file_df = file_df[~file_df['candle_date_time_kst'].isin(existing_data['candle_date_time_kst'])]
 
         self.log.info('중복 제거 후 적재 건수:' + str(len(file_df)))
-        uri = f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}'
-        engine = create_engine(uri)
-        file_df.to_sql(name=table_name,
-                            con=engine,
-                            schema='public',
-                            if_exists=if_exists,
-                            index=False
-                        )
+
+        if not file_df.empty:
+            uri = f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}'
+            engine = create_engine(uri)
+            file_df.to_sql(name=table_name,
+                                con=engine,
+                                schema='public',
+                                if_exists=if_exists,
+                                index=False
+                            )
+        else:
+            self.log.info(f"{table_name}에 추가할 새 데이터가 없음")
