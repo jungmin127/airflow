@@ -1,6 +1,7 @@
 from airflow.hooks.base import BaseHook
 import psycopg2
 import pandas as pd
+from sqlalchemy import create_engine
 
 class CustomCryptoPostgresHook(BaseHook):
 
@@ -18,8 +19,29 @@ class CustomCryptoPostgresHook(BaseHook):
         self.postgres_conn = psycopg2.connect(host=self.host, user=self.user, password=self.password, dbname=self.dbname, port=self.port)
         return self.postgres_conn
     
+    def create_table_if_not_exists(self, table_name):
+        create_table_query = f"""
+        CREATE TABLE IF NOT EXISTS public.{table_name} (
+            market VARCHAR(50),
+            candle_date_time_utc TIMESTAMP,
+            candle_date_time_kst TIMESTAMP,
+            opening_price NUMERIC,
+            high_price NUMERIC,
+            low_price NUMERIC,
+            trade_price NUMERIC,
+            timestamp NUMERIC,
+            candle_acc_trade_price NUMERIC,
+            candle_acc_trade_volume NUMERIC,
+            unit NUMERIC -- 단위
+        );
+        """
+        conn = self.get_conn()
+        with conn.cursor() as cursor:
+            cursor.execute(create_table_query)
+            conn.commit()
+
     def bulk_load(self, table_name, file_name, delimiter: str, is_header: bool, is_replace: bool):
-        from sqlalchemy import create_engine
+        self.create_table_if_not_exists(table_name)
 
         self.log.info('적재 대상파일:' + file_name)
         self.log.info('테이블 :' + table_name)
