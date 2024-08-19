@@ -32,20 +32,21 @@ class CustomCryptoPostgresHook(BaseHook):
             timestamp NUMERIC,
             candle_acc_trade_price NUMERIC,
             candle_acc_trade_volume NUMERIC,
-            unit NUMERIC -- 단위
+            unit NUMERIC
         );
         """
         conn = self.get_conn()
         with conn.cursor() as cursor:
             cursor.execute(create_table_query)
             conn.commit()
+        conn.colse()
 
     def bulk_load(self, table_name, file_name, delimiter: str, is_header: bool, is_replace: bool):
         self.create_table_if_not_exists(table_name)
 
         self.log.info('적재 대상파일:' + file_name)
         self.log.info('테이블 :' + table_name)
-        self.get_conn()
+        conn = self.get_conn()
         header = 0 if is_header else None
         if_exists = 'replace' if is_replace else 'append'
         file_df = pd.read_csv(file_name, header=header, delimiter=delimiter)
