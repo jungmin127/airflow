@@ -29,6 +29,8 @@ with DAG(
         )
         tasks.append(task)
 
+    # 병렬처리 하면, 한번에 API 호출회수가 너무 많아서 실패 발생
+    # 의존관계로 실행
     if tasks:
-        for task in tasks:
-            task
+        for i in range(len(tasks) - 1):
+            tasks[i] >> tasks[i + 1]
