@@ -44,7 +44,7 @@ class CustomCryptoPostgresHook(BaseHook):
         self.create_table_if_not_exists(table_name)
         self.log.info('적재 대상파일:' + file_name)
         self.log.info('테이블 :' + table_name)
-        self.get_conn()
+        conn = self.get_conn()
 
         header = 0 if is_header else None
         file_df = pd.read_csv(file_name, header=header, delimiter=delimiter)
