@@ -32,7 +32,7 @@ class CustomCryptoPostgresHook(BaseHook):
             timestamp NUMERIC,
             candle_acc_trade_price NUMERIC,
             candle_acc_trade_volume NUMERIC,
-            unit NUMERIC,
+            unit NUMERIC
         );
         """
         conn = self.get_conn()
