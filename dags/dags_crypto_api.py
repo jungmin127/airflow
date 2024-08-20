@@ -30,5 +30,5 @@ with DAG(
         tasks.append(task)
 
     if tasks:
-        for i in range(len(tasks) - 1):
-            tasks[i] >> tasks[i + 1]
+        for task in tasks:
+            task
