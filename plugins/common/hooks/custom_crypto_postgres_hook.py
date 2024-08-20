@@ -62,7 +62,8 @@ class CustomCryptoPostgresHook(BaseHook):
             with engine.connect() as conn:
                 existing_data_query = f"SELECT candle_date_time_kst FROM {table_name};"
                 existing_data = pd.read_sql(existing_data_query, conn)
-                file_df = file_df[~file_df['candle_date_time_kst'].isin(existing_data['candle_date_time_kst'])]
+            
+            file_df = file_df[~file_df['candle_date_time_kst'].isin(existing_data['candle_date_time_kst'])]
 
         self.log.info('중복 제거 후 적재 건수:' + str(len(file_df)))
 
