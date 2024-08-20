@@ -44,7 +44,6 @@ class CustomCryptoPostgresHook(BaseHook):
         self.create_table_if_not_exists(table_name)
         self.log.info('적재 대상파일:' + file_name)
         self.log.info('테이블 :' + table_name)
-        conn = self.get_conn()
 
         header = 0 if is_header else None
         file_df = pd.read_csv(file_name, header=header, delimiter=delimiter)
@@ -76,6 +75,7 @@ class CustomCryptoPostgresHook(BaseHook):
                                schema='public',
                                if_exists='append',
                                index=False)
+                self.log.info(f"{table_name}에 데이터 적재 완료")
             except Exception as e:
                 self.log.error(f"데이터 적재 중 오류 발생: {e}")
         else:
