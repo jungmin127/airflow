@@ -45,15 +45,14 @@ class CustomCryptoPostgresHook(BaseHook):
         self.log.info('적재 대상파일:' + file_name)
         self.log.info('테이블 :' + table_name)
         self.get_conn()
+
         header = 0 if is_header else None
-        #if_exists = 'replace' if is_replace else 'append'
         file_df = pd.read_csv(file_name, header=header, delimiter=delimiter)
         file_df = file_df.drop_duplicates()
 
         for col in file_df.columns:
             try:
-                # string문자열이 아닐 경우 continue
-                file_df[col] = file_df[col].str.replace('\r\n','')
+                file_df[col] = file_df[col].astype(str).str.replace('\r\n', '', regex=False)
                 self.log.info(f'{table_name}.{col}: 개행문자 제거')
             except:
                 continue
@@ -61,7 +60,6 @@ class CustomCryptoPostgresHook(BaseHook):
         if not is_replace:
             engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}')
             with engine.connect() as conn:
-                # 기존 데이터와 중복된 행 필터링
                 existing_data_query = f"SELECT candle_date_time_kst FROM {table_name};"
                 existing_data = pd.read_sql(existing_data_query, conn)
                 file_df = file_df[~file_df['candle_date_time_kst'].isin(existing_data['candle_date_time_kst'])]
@@ -71,11 +69,13 @@ class CustomCryptoPostgresHook(BaseHook):
         if not file_df.empty:
             uri = f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}'
             engine = create_engine(uri)
-            file_df.to_sql(name=table_name,
-                                con=engine,
-                                schema='public',
-                                if_exists='append',
-                                index=False
-                            )
+            try:
+                file_df.to_sql(name=table_name,
+                               con=engine,
+                               schema='public',
+                               if_exists='append',
+                               index=False)
+            except Exception as e:
+                self.log.error(f"데이터 적재 중 오류 발생: {e}")
         else:
             self.log.info(f"{table_name}에 추가할 새 데이터가 없음")
