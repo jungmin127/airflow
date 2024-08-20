@@ -24,7 +24,7 @@ class CustomCryptoPostgresHook(BaseHook):
         CREATE TABLE IF NOT EXISTS public.{table_name} (
             market VARCHAR(50),
             candle_date_time_utc TIMESTAMP,
-            candle_date_time_kst TIMESTAMP,
+            candle_date_time_kst TIMESTAMP UNIQUE,
             opening_price NUMERIC,
             high_price NUMERIC,
             low_price NUMERIC,
@@ -32,7 +32,7 @@ class CustomCryptoPostgresHook(BaseHook):
             timestamp NUMERIC,
             candle_acc_trade_price NUMERIC,
             candle_acc_trade_volume NUMERIC,
-            unit NUMERIC
+            unit NUMERIC,
         );
         """
         conn = self.get_conn()
@@ -62,7 +62,7 @@ class CustomCryptoPostgresHook(BaseHook):
             engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}')
             with engine.connect() as conn:
                 # 기존 데이터와 중복된 행 필터링
-                existing_data_query = f"SELECT candle_date_time_kst, trade_price FROM {table_name};"
+                existing_data_query = f"SELECT candle_date_time_kst FROM {table_name};"
                 existing_data = pd.read_sql(existing_data_query, conn)
                 file_df = file_df[~file_df['candle_date_time_kst'].isin(existing_data['candle_date_time_kst'])]
 
