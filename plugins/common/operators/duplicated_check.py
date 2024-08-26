@@ -4,7 +4,7 @@ import pandas as pd
 import os
 from sqlalchemy import create_engine
 
-class CustomCryptoPostgresHook(BaseHook):
+class CompareDataOperator(BaseHook):
 
     def __init__(self, postgres_conn_id, **kwargs):
         self.postgres_conn_id = postgres_conn_id
