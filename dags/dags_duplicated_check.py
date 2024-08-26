@@ -26,7 +26,7 @@ with DAG(
             path=file_path,
             file_name=file_name,
             table_name=table_name,
-            postgres_conn_id='conn-db-postgres-custom'  # Airflow Connection ID for PostgreSQL
+            postgres_conn_id='conn-db-postgres-custom' 
         )
         tasks.append(task)
 
