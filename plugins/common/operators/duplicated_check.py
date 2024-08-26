@@ -1,27 +1,24 @@
 from airflow.hooks.base import BaseHook
-import pandas as pd
 import psycopg2
+import pandas as pd
 import os
 from sqlalchemy import create_engine
-from airflow.models.baseoperator import BaseOperator
 
-class CompareDataOperator(BaseOperator):
-    def __init__(self, path, file_name, table_name, postgres_conn_id, **kwargs):
-        super().__init__(**kwargs)  # Ensure proper initialization of the parent class
-        self.path = path
-        self.file_name = file_name
-        self.table_name = table_name
+class CustomCryptoPostgresHook(BaseHook):
+
+    def __init__(self, postgres_conn_id, **kwargs):
         self.postgres_conn_id = postgres_conn_id
-
+    
     def get_conn(self):
-        airflow_conn = BaseHook.get_connection(self.postgres_conn_id)
+        airflow_conn = BaseHook.get_connection(self.postgres_conn_id) 
         self.host = airflow_conn.host
         self.user = airflow_conn.login
         self.password = airflow_conn.password
         self.dbname = airflow_conn.schema
         self.port = airflow_conn.port
 
-        return psycopg2.connect(host=self.host, user=self.user, password=self.password, dbname=self.dbname, port=self.port)
+        self.postgres_conn = psycopg2.connect(host=self.host, user=self.user, password=self.password, dbname=self.dbname, port=self.port)
+        return self.postgres_conn
 
     def execute(self, context):
         self.log.info("Executing CompareDataOperator...")
