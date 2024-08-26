@@ -42,8 +42,8 @@ class CustomCryptoPostgresHook(BaseHook):
 
     def bulk_load(self, table_name, file_name, delimiter: str, is_header: bool, is_replace: bool):
         self.create_table_if_not_exists(table_name)
-        self.log.info('적재 대상파일:' + file_name)
-        self.log.info('테이블 :' + table_name)
+        self.log.info(f'적재 대상파일: {file_name}')
+        self.log.info(f'테이블 : {table_name}')
 
         header = 0 if is_header else None
         file_df = pd.read_csv(file_name, header=header, delimiter=delimiter)
@@ -61,10 +61,11 @@ class CustomCryptoPostgresHook(BaseHook):
             with engine.connect() as conn:
                 existing_data_query = f"SELECT candle_date_time_kst FROM {table_name};"
                 existing_data = pd.read_sql(existing_data_query, conn)
-            
-            file_df = file_df[~file_df['candle_date_time_kst'].isin(existing_data['candle_date_time_kst'])]
 
-        self.log.info('중복 제거 후 적재 건수:' + str(len(file_df)))
+
+            file_df = file_df[~file_df['candle_date_time_kst'].isin(existing_data['candle_date_time_kst'])]
+            
+        self.log.info(f'중복 제거 후 적재 건수: {len(file_df)}')
 
         if not file_df.empty:
             uri = f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}'
