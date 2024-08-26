@@ -48,6 +48,9 @@ class CustomCryptoPostgresHook(BaseHook):
         header = 0 if is_header else None
         file_df = pd.read_csv(file_name, header=header, delimiter=delimiter)
         file_df = file_df.drop_duplicates(subset=['candle_date_time_kst'])
+        duplicates = file_df[file_df.duplicated(subset=['candle_date_time_kst'], keep=False)]
+        if not duplicates.empty:
+            self.log.info(f"파일에서 중복 데이터 발견: {duplicates}")
 
         self.log.info(f'파일에서 중복 제거 후 데이터 건수: {len(file_df)}')
 
@@ -66,6 +69,8 @@ class CustomCryptoPostgresHook(BaseHook):
             
             existing_dates = set(existing_data['candle_date_time_kst'])
             file_df = file_df[~file_df['candle_date_time_kst'].isin(existing_dates)]
+
+            self.log.info(f'중복 제거 후 데이터 건수: {len(file_df)}')
         
         self.log.info(f'중복 제거 후 적재 건수: {len(file_df)}')
 
