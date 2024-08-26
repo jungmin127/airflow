@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 
 class LoadDataOperator(BaseOperator):
     def __init__(self, path, file_name, table_name, postgres_conn_id, **kwargs):
-        super().__init__(**kwargs)  # Ensure proper initialization of the parent class
+        super().__init__(**kwargs) 
         self.path = path
         self.file_name = file_name
         self.table_name = table_name
@@ -25,11 +25,8 @@ class LoadDataOperator(BaseOperator):
 
     def execute(self, context):
         self.log.info("Executing LoadDataOperator...")
-
-        # PostgreSQL connection setup
         conn = self.get_conn()
-        
-        # Read file data
+
         file_path = os.path.join(self.path, self.file_name)
         if not os.path.exists(file_path):
             self.log.error(f"파일이 존재하지 않음: {file_path}")
@@ -37,8 +34,7 @@ class LoadDataOperator(BaseOperator):
         
         file_df = pd.read_csv(file_path, encoding='utf-8')
         file_df['candle_date_time_kst'] = pd.to_datetime(file_df['candle_date_time_kst'])
-        
-        # Fetch data from PostgreSQL
+ 
         engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}')
         with engine.connect() as connection:
             existing_data_query = f"SELECT candle_date_time_kst FROM {self.table_name};"
@@ -47,17 +43,12 @@ class LoadDataOperator(BaseOperator):
         existing_dates = set(existing_data['candle_date_time_kst'])
         file_dates = set(file_df['candle_date_time_kst'])
 
-        # Find non-duplicate data
         unique_dates = file_dates - existing_dates
-        
-        # Filter data from file_df that are unique
         unique_df = file_df[file_df['candle_date_time_kst'].isin(unique_dates)]
-        
-        # Log unique data
+
         self.log.info(f"중복되지 않는 데이터 건수: {len(unique_df)}")
         self.log.info(f"중복되지 않는 데이터 Raw:\n{unique_df}")
 
-        # Save unique data to PostgreSQL
         if not unique_df.empty:
             try:
                 unique_df.to_sql(name=self.table_name,
