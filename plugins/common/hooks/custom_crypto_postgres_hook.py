@@ -56,43 +56,51 @@ class CustomCryptoPostgresHook(BaseHook):
             except:
                 continue
 
-        if is_replace:
-            self.remove_existing_data(table_name)
-
+        # 데이터베이스 연결
         engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}')
         
-        with engine.connect() as conn:
-            existing_data_query = f"SELECT candle_date_time_kst FROM {table_name};"
-            existing_data = pd.read_sql(existing_data_query, conn)
-
-        existing_dates = set(existing_data['candle_date_time_kst'])
-        file_df = file_df[~file_df['candle_date_time_kst'].isin(existing_dates)]
+        if not is_replace:
+            with engine.connect() as conn:
+                existing_data_query = f"SELECT candle_date_time_kst FROM {table_name};"
+                existing_data = pd.read_sql(existing_data_query, conn)
             
+            existing_dates = set(existing_data['candle_date_time_kst'])
+            file_df = file_df[~file_df['candle_date_time_kst'].isin(existing_dates)]
+        
         self.log.info(f'중복 제거 후 적재 건수: {len(file_df)}')
 
         if not file_df.empty:
             try:
                 file_df.to_sql(name=table_name,
-                               con=engine,
-                               schema='public',
-                               if_exists='append',
-                               index=False,
-                               method='multi')
+                            con=engine,
+                            schema='public',
+                            if_exists='append',
+                            index=False,
+                            method='multi')
                 self.log.info(f"{table_name}에 데이터 적재 완료")
             except Exception as e:
                 self.log.error(f"데이터 적재 중 오류 발생: {e}")
         else:
             self.log.info(f"{table_name}에 추가할 새 데이터가 없음")
 
+
     def remove_existing_data(self, table_name):
         engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}')
         with engine.connect() as conn:
+            # 삭제 쿼리 개선
             delete_query = f"""
             DELETE FROM {table_name}
             WHERE candle_date_time_kst IN (
-                SELECT candle_date_time_kst FROM {table_name}
-                EXCEPT
-                SELECT candle_date_time_kst FROM {table_name}
+                SELECT candle_date_time_kst
+                FROM (
+                    SELECT candle_date_time_kst
+                    FROM {table_name}
+                    EXCEPT
+                    SELECT candle_date_time_kst
+                    FROM {table_name}
+                ) AS subquery
             );
             """
-            conn.execute(delete_query)
+            self.log.info(f"Executing delete query: {delete_query}")
+            result = conn.execute(delete_query)
+            self.log.info(f"Rows deleted: {result.rowcount}")
