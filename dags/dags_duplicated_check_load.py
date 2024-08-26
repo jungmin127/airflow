@@ -1,6 +1,7 @@
 from airflow import DAG
 import pendulum
-from common.operators.duplicated_check import CompareDataOperator, LoadDataOperator
+from common.operators.duplicated_check import CompareDataOperator
+from common.operators.duplicated_check_load import LoadDataOperator
 
 coins = [
     'KRW-BTC', 'KRW-ETH', 'KRW-SOL', 'KRW-XRP', 'KRW-TRX', 'KRW-LINK', 'KRW-HBAR',
