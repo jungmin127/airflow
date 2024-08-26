@@ -39,6 +39,20 @@ class CustomCryptoPostgresHook(BaseHook):
         with conn.cursor() as cursor:
             cursor.execute(create_table_query)
             conn.commit()
+    
+    def remove_existing_data(self, table_name):
+        engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}')
+        with engine.connect() as conn:
+            delete_query = f"""
+            DELETE FROM {table_name}
+            WHERE candle_date_time_kst IN (
+                SELECT candle_date_time_kst FROM {table_name}
+                EXCEPT
+                SELECT candle_date_time_kst FROM {table_name}
+            );
+            """
+            conn.execute(delete_query)
+            conn.commit()
 
     def bulk_load(self, table_name, file_name, delimiter: str, is_header: bool, is_replace: bool):
         self.create_table_if_not_exists(table_name)
@@ -57,13 +71,15 @@ class CustomCryptoPostgresHook(BaseHook):
                 continue
 
         if not is_replace:
-            engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}')
-            with engine.connect() as conn:
-                existing_data_query = f"SELECT candle_date_time_kst FROM {table_name};"
-                existing_data = pd.read_sql(existing_data_query, conn)
+            self.remove_existing_data(table_name)
 
+        engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}')
+        with engine.connect() as conn:
+            existing_data_query = f"SELECT candle_date_time_kst FROM {table_name};"
+            existing_data = pd.read_sql(existing_data_query, conn)
 
-            file_df = file_df[~file_df['candle_date_time_kst'].isin(existing_data['candle_date_time_kst'])]
+        existing_dates = set(existing_data['candle_date_time_kst'])
+        file_df = file_df[~file_df['candle_date_time_kst'].isin(existing_dates)]
             
         self.log.info(f'중복 제거 후 적재 건수: {len(file_df)}')
 
