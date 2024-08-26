@@ -1,6 +1,5 @@
 from airflow import DAG
 import pendulum
-from airflow.operators.python import PythonOperator
 from common.operators.duplicated_check import CompareDataOperator
 
 coins = [
@@ -32,5 +31,5 @@ with DAG(
         tasks.append(task)
 
     if tasks:
-        for task in tasks:
-            task
+        for i in range(len(tasks) - 1):
+            tasks[i] >> tasks[i + 1]
