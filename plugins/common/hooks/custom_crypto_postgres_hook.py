@@ -41,7 +41,7 @@ class CustomCryptoPostgresHook(BaseHook):
     #         conn.commit()
 
     def bulk_load(self, table_name, file_name, delimiter: str, is_header: bool, is_replace: bool):
-        self.create_table_if_not_exists(table_name)
+        #self.create_table_if_not_exists(table_name)
         self.log.info(f'적재 대상파일: {file_name}')
         self.log.info(f'테이블 : {table_name}')
 
