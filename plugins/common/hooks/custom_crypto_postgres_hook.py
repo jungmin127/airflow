@@ -19,26 +19,26 @@ class CustomCryptoPostgresHook(BaseHook):
         self.postgres_conn = psycopg2.connect(host=self.host, user=self.user, password=self.password, dbname=self.dbname, port=self.port)
         return self.postgres_conn
     
-    def create_table_if_not_exists(self, table_name):
-        create_table_query = f"""
-        CREATE TABLE IF NOT EXISTS public.{table_name} (
-            market VARCHAR(50),
-            candle_date_time_utc TIMESTAMP,
-            candle_date_time_kst TIMESTAMP UNIQUE,
-            opening_price NUMERIC,
-            high_price NUMERIC,
-            low_price NUMERIC,
-            trade_price NUMERIC,
-            timestamp NUMERIC,
-            candle_acc_trade_price NUMERIC,
-            candle_acc_trade_volume NUMERIC,
-            unit NUMERIC
-        );
-        """
-        conn = self.get_conn()
-        with conn.cursor() as cursor:
-            cursor.execute(create_table_query)
-            conn.commit()
+    # def create_table_if_not_exists(self, table_name):
+    #     create_table_query = f"""
+    #     CREATE TABLE IF NOT EXISTS public.{table_name} (
+    #         market VARCHAR(50),
+    #         candle_date_time_utc TIMESTAMP,
+    #         candle_date_time_kst TIMESTAMP UNIQUE,
+    #         opening_price NUMERIC,
+    #         high_price NUMERIC,
+    #         low_price NUMERIC,
+    #         trade_price NUMERIC,
+    #         timestamp NUMERIC,
+    #         candle_acc_trade_price NUMERIC,
+    #         candle_acc_trade_volume NUMERIC,
+    #         unit NUMERIC
+    #     );
+    #     """
+    #     conn = self.get_conn()
+    #     with conn.cursor() as cursor:
+    #         cursor.execute(create_table_query)
+    #         conn.commit()
 
     def bulk_load(self, table_name, file_name, delimiter: str, is_header: bool, is_replace: bool):
         self.create_table_if_not_exists(table_name)
