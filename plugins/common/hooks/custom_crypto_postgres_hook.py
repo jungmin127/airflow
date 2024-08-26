@@ -39,20 +39,6 @@ class CustomCryptoPostgresHook(BaseHook):
         with conn.cursor() as cursor:
             cursor.execute(create_table_query)
             conn.commit()
-    
-    def remove_existing_data(self, table_name):
-        engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}')
-        with engine.connect() as conn:
-            delete_query = f"""
-            DELETE FROM {table_name}
-            WHERE candle_date_time_kst IN (
-                SELECT candle_date_time_kst FROM {table_name}
-                EXCEPT
-                SELECT candle_date_time_kst FROM {table_name}
-            );
-            """
-            conn.execute(delete_query)
-            conn.commit()
 
     def bulk_load(self, table_name, file_name, delimiter: str, is_header: bool, is_replace: bool):
         self.create_table_if_not_exists(table_name)
@@ -98,3 +84,16 @@ class CustomCryptoPostgresHook(BaseHook):
                 self.log.error(f"데이터 적재 중 오류 발생: {e}")
         else:
             self.log.info(f"{table_name}에 추가할 새 데이터가 없음")
+            
+    def remove_existing_data(self, table_name):
+        engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}')
+        with engine.connect() as conn:
+            delete_query = f"""
+            DELETE FROM {table_name}
+            WHERE candle_date_time_kst IN (
+                SELECT candle_date_time_kst FROM {table_name}
+                EXCEPT
+                SELECT candle_date_time_kst FROM {table_name}
+            );
+            """
+            conn.execute(delete_query)
