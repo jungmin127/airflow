@@ -24,7 +24,7 @@ class CustomCryptoPostgresHook(BaseHook):
         CREATE TABLE IF NOT EXISTS public.{table_name} (
             market VARCHAR(50),
             candle_date_time_utc TIMESTAMP,
-            candle_date_time_kst TIMESTAMP,
+            candle_date_time_kst TIMESTAMP UNIQUE,
             opening_price NUMERIC,
             high_price NUMERIC,
             low_price NUMERIC,
