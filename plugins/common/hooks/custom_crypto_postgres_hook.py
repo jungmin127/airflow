@@ -47,7 +47,9 @@ class CustomCryptoPostgresHook(BaseHook):
 
         header = 0 if is_header else None
         file_df = pd.read_csv(file_name, header=header, delimiter=delimiter)
-        file_df = file_df.drop_duplicates()
+        file_df = file_df.drop_duplicates(subset=['candle_date_time_kst'])
+
+        self.log.info(f'파일에서 중복 제거 후 데이터 건수: {len(file_df)}')
 
         for col in file_df.columns:
             try:
@@ -55,11 +57,9 @@ class CustomCryptoPostgresHook(BaseHook):
                 self.log.info(f'{table_name}.{col}: 개행문자 제거')
             except:
                 continue
-
-        # 데이터베이스 연결
-        engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}')
         
         if not is_replace:
+            engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}')
             with engine.connect() as conn:
                 existing_data_query = f"SELECT candle_date_time_kst FROM {table_name};"
                 existing_data = pd.read_sql(existing_data_query, conn)
@@ -72,11 +72,11 @@ class CustomCryptoPostgresHook(BaseHook):
         if not file_df.empty:
             try:
                 file_df.to_sql(name=table_name,
-                            con=engine,
-                            schema='public',
-                            if_exists='append',
-                            index=False,
-                            method='multi')
+                                con=engine,
+                                schema='public',
+                                if_exists='append',
+                                index=False,
+                                method='multi')
                 self.log.info(f"{table_name}에 데이터 적재 완료")
             except Exception as e:
                 self.log.error(f"데이터 적재 중 오류 발생: {e}")
