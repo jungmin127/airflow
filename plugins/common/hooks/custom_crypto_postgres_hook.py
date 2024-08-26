@@ -74,7 +74,8 @@ class CustomCryptoPostgresHook(BaseHook):
                                con=engine,
                                schema='public',
                                if_exists='append',
-                               index=False)
+                               index=False,
+                               method='multi')
                 self.log.info(f"{table_name}에 데이터 적재 완료")
             except Exception as e:
                 self.log.error(f"데이터 적재 중 오류 발생: {e}")
