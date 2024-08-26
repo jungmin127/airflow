@@ -40,39 +40,25 @@ class CustomCryptoPostgresHook(BaseHook):
             cursor.execute(create_table_query)
             conn.commit()
 
-    def bulk_load(self, table_name, file_name, delimiter: str, is_header: bool, is_replace: bool):
+    def bulk_load(self, table_name, file_name, delimiter: str, is_header: bool):
         self.create_table_if_not_exists(table_name)
-        self.log.info(f'적재 대상파일: {file_name}')
-        self.log.info(f'테이블 : {table_name}')
+        self.log.info(f'Processing file: {file_name}')
+        self.log.info(f'Table: {table_name}')
 
         header = 0 if is_header else None
         file_df = pd.read_csv(file_name, header=header, delimiter=delimiter)
         file_df = file_df.drop_duplicates(subset=['candle_date_time_kst'])
-        duplicates = file_df[file_df.duplicated(subset=['candle_date_time_kst'], keep=False)]
-        if not duplicates.empty:
-            self.log.info(f"파일에서 중복 데이터 발견: {duplicates}")
 
-        self.log.info(f'파일에서 중복 제거 후 데이터 건수: {len(file_df)}')
-
-        for col in file_df.columns:
-            try:
-                file_df[col] = file_df[col].astype(str).str.replace('\r\n', '', regex=False)
-                self.log.info(f'{table_name}.{col}: 개행문자 제거')
-            except:
-                continue
+        # Connect to PostgreSQL
+        engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}')
+        with engine.connect() as conn:
+            existing_data_query = f"SELECT candle_date_time_kst FROM {table_name};"
+            existing_data = pd.read_sql(existing_data_query, conn)
         
-        if not is_replace:
-            engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}')
-            with engine.connect() as conn:
-                existing_data_query = f"SELECT candle_date_time_kst FROM {table_name};"
-                existing_data = pd.read_sql(existing_data_query, conn)
-            
-            existing_dates = set(existing_data['candle_date_time_kst'])
-            file_df = file_df[~file_df['candle_date_time_kst'].isin(existing_dates)]
+        existing_dates = set(existing_data['candle_date_time_kst'])
+        file_df = file_df[~file_df['candle_date_time_kst'].isin(existing_dates)]
 
-            self.log.info(f'중복 제거 후 데이터 건수: {len(file_df)}')
-        
-        self.log.info(f'중복 제거 후 적재 건수: {len(file_df)}')
+        self.log.info(f'Non-duplicate records to insert: {len(file_df)}')
 
         if not file_df.empty:
             try:
@@ -82,30 +68,8 @@ class CustomCryptoPostgresHook(BaseHook):
                                 if_exists='append',
                                 index=False,
                                 method='multi')
-                self.log.info(f"{table_name}에 데이터 적재 완료")
+                self.log.info(f"Data loaded into {table_name}")
             except Exception as e:
-                self.log.error(f"데이터 적재 중 오류 발생: {e}")
+                self.log.error(f"Error loading data: {e}")
         else:
-            self.log.info(f"{table_name}에 추가할 새 데이터가 없음")
-
-
-    def remove_existing_data(self, table_name):
-        engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}')
-        with engine.connect() as conn:
-            # 삭제 쿼리 개선
-            delete_query = f"""
-            DELETE FROM {table_name}
-            WHERE candle_date_time_kst IN (
-                SELECT candle_date_time_kst
-                FROM (
-                    SELECT candle_date_time_kst
-                    FROM {table_name}
-                    EXCEPT
-                    SELECT candle_date_time_kst
-                    FROM {table_name}
-                ) AS subquery
-            );
-            """
-            self.log.info(f"Executing delete query: {delete_query}")
-            result = conn.execute(delete_query)
-            self.log.info(f"Rows deleted: {result.rowcount}")
+            self.log.info(f"No new data to insert into {table_name}")

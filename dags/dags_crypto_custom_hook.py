@@ -17,8 +17,7 @@ def insrt_postgres(postgres_conn_id, market, **kwargs):
         table_name=table_name,
         file_name=file_path,
         delimiter=',',
-        is_header=True,
-        is_replace=False
+        is_header=True
     )
 
 with DAG(
