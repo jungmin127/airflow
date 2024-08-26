@@ -24,7 +24,7 @@ def insrt_postgres(postgres_conn_id, market, **kwargs):
 with DAG(
     dag_id='dags_crypto_custom_hook',
     start_date=pendulum.datetime(2024, 8, 18, tz='Asia/Seoul'),
-    schedule='3 * * * *',
+    schedule='5 * * * *',
     catchup=False
 ) as dag:
 
