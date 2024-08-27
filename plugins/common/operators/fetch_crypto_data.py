@@ -23,15 +23,20 @@ class FetchLatestTradePriceOperator(BaseOperator):
         self.port = airflow_conn.port
         return psycopg2.connect(host=self.host, user=self.user, password=self.password, dbname=self.dbname, port=self.port)
 
+    def format_table_name(self, table_name):
+        """Converts KRW-BTC to btc"""
+        return table_name.split('-')[1].lower()
+
     def execute(self, context):
-        self.log.info(f"Fetching latest trade price from table {self.table_name}...")
+        crypto_table_name = self.format_table_name(self.table_name)
+        self.log.info(f"Fetching latest trade price from table {crypto_table_name}...")
 
         conn = self.get_conn()
         engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}')
         
         query = f"""
         SELECT market, candle_date_time_kst, trade_price
-        FROM {self.table_name}
+        FROM {crypto_table_name}
         ORDER BY candle_date_time_kst DESC
         LIMIT 120;  
         """
@@ -40,7 +45,7 @@ class FetchLatestTradePriceOperator(BaseOperator):
             df = pd.read_sql(query, connection)
         
         if df.empty:
-            self.log.info(f"No data found in table {self.table_name}.")
+            self.log.info(f"No data found in table {crypto_table_name}.")
             return
         
         iloc_ranges = [24, 36, 48, 60, 120]

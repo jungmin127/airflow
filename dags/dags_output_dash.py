@@ -18,7 +18,7 @@ with DAG(
     tasks = []
     for coin in coins:
         task = FetchLatestTradePriceOperator(
-            task_id=f'fetch_latest_trade_price_{coin.lower()}',
+            task_id=f'buy_sell_return_dash_{coin.lower()}',
             table_name=coin,
             postgres_conn_id='conn-db-postgres-custom',
             dash_api_url='http://127.0.0.1:8050/api/upload'
