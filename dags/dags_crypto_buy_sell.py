@@ -4,7 +4,6 @@ import numpy as np
 import requests
 import json
 from datetime import datetime, timedelta
-from dash import Dash, html, dash_table
 import warnings
 warnings.filterwarnings('ignore')
 pd.options.display.float_format = '{:.1f}'.format
@@ -166,38 +165,3 @@ filter_sell_df['date'] = filter_sell_df['date'].apply(lambda x: x.to_timestamp()
 filter_sell_df['(n)ma'] = filter_sell_df['(n)ma'].astype(int)
 filter_sell_df['close'] = filter_sell_df['close'].astype(float)
 filter_sell_df['ma'] = filter_sell_df['ma'].astype(float)
-
-app = Dash(__name__)
-
-app.layout = html.Div([
-    html.H1('Buy Today'),
-    dash_table.DataTable(
-        id='table1',
-        columns=[{"name": i, "id": i} for i in filter_buy_df.columns],
-        data=filter_buy_df.to_dict('records'),
-        style_table={'width': '50%', 'margin': 'left'}
-    ),
-
-    html.H2('Sell Today'),
-    dash_table.DataTable(
-        id='table2',
-        columns=[{"name": i, "id": i} for i in filter_sell_df.columns],
-        data=filter_sell_df.to_dict('records'),
-        style_table={'width': '50%', 'margin': 'left'}
-    ),
-
-    html.H3('Return'),  
-    dash_table.DataTable(
-        id='table3',
-        columns=[{"name": i, "id": i} for i in filter_return_df.columns],
-        data=filter_return_df.to_dict('records'),
-        style_table={'width': '50%', 'margin': 'left'}
-    )
-])
-
-if __name__ == '__main__':
-    app.run_server(debug=True)
-
-# return 그래프 경우의수 15개 (이평3 x 누적기간5) barplot 그려서 넣기
-# ma & 리턴값 소수점 첫번쨰 작업
-# 데이터프레임을 좀 더 이쁘게 꾸밀 방법 (폰트, 표 색상 등)
