@@ -184,4 +184,9 @@ class FetchLatestTradePriceOperator(BaseOperator):
         if not filter_return_df.empty:
             self.log.info(f"{filter_return_df.to_string(index=False)}")
         else:
-            self.log.info("코드에 문제가 있는 상태") 
+            self.log.info("코드에 문제가 있는 상태")
+
+        with engine.connect() as connection:
+            filter_buy_df.to_sql('buy_conditions', connection, if_exists='append', index=False)
+            filter_sell_df.to_sql('sell_conditions', connection, if_exists='append', index=False)
+            filter_return_df.to_sql('return_conditions', connection, if_exists='append', index=False)
