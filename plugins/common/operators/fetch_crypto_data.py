@@ -88,6 +88,7 @@ class FetchLatestTradePriceOperator(BaseOperator):
                             filter_buy_df = pd.concat([filter_buy_df, buy_row], ignore_index=True)
                             #filter_buy_df = filter_buy_df.drop_duplicates(['crypto', '(n)ma'], keep='last').reset_index(drop=True)
 
+        cryptos = df['market'].unique()
         for crypto in cryptos:
             crypto_df = df[df['market'] == crypto].copy()
             for iloc_range in iloc_ranges:
@@ -126,6 +127,7 @@ class FetchLatestTradePriceOperator(BaseOperator):
                             filter_sell_df = pd.concat([filter_sell_df, sell_row], ignore_index=True)
                             #filter_sell_df = filter_sell_df.drop_duplicates(['crypto', '(n)ma'], keep='last').reset_index(drop=True)          
         
+        cryptos = df['market'].unique()
         for crypto in cryptos:
             crypto_df = df[df['market'] == crypto].copy()
             for iloc_range in iloc_ranges:
