@@ -63,10 +63,10 @@ class FetchLatestTradePriceOperator(BaseOperator):
 
                     if not df_buy.empty:
                         last_date_buy = df_buy.tail(1)['candle_date_time_kst'].values[0]
-                        last_day_buy = pd.to_datetime(last_day_buy)
+                        last_date_buy = pd.to_datetime(last_date_buy)
 
                         kst = pytz.timezone('Asia/Seoul')
-                        last_day_buy_kst = last_day_buy.tz_localize(kst, ambiguous='NaT')
+                        last_date_buy_kst = last_date_buy.tz_localize(kst, ambiguous='NaT')
                         utc_time = datetime.now(timezone.utc)
                         utc_time = pytz.utc.localize(utc_time)
                         kst_time = utc_time.astimezone(kst)
@@ -76,7 +76,7 @@ class FetchLatestTradePriceOperator(BaseOperator):
 
                         previous_hour_time = get_previous_hour(kst_time)
 
-                        if last_day_buy_kst == previous_hour_time:
+                        if last_date_buy_kst == previous_hour_time:
                             buy_row = pd.DataFrame({
                                 'crypto': [crypto],
                                 '(n)ma': [rolling_window],
