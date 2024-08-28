@@ -44,7 +44,7 @@ class FetchLatestTradePriceOperator(BaseOperator):
             df = pd.read_sql(query, connection)
         
         iloc_ranges = [24, 36, 48, 60]
-        rolling_windows = [5, 10, 15]
+        rolling_windows = [1, 2, 3]
         filter_buy_df = pd.DataFrame(columns=['crypto', '(n)ma', 'datetime', 'close', 'ma'])
         filter_sell_df = pd.DataFrame(columns=['crypto', '(n)ma', 'datetime', 'close', 'ma'])
         filter_return_df = pd.DataFrame(columns=['crypto', '(n)ma', 'day', 'date', 'return(%)'])
