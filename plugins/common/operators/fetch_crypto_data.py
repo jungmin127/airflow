@@ -36,14 +36,14 @@ class FetchLatestTradePriceOperator(BaseOperator):
         query = f"""
         SELECT market, candle_date_time_kst, trade_price
         FROM {crypto_table_name}
-        ORDER BY candle_date_time_kst
+        ORDER BY candle_date_time_kst desc
         LIMIT 120;  
         """
 
         with engine.connect() as connection:
             df = pd.read_sql(query, connection)
         
-        iloc_ranges = [24, 36, 48, 60, 120]
+        iloc_ranges = [24, 36, 48, 60]
         rolling_windows = [5, 10, 15]
         filter_buy_df = pd.DataFrame(columns=['crypto', '(n)ma', 'datetime', 'close', 'ma'])
         filter_sell_df = pd.DataFrame(columns=['crypto', '(n)ma', 'datetime', 'close', 'ma'])
@@ -54,7 +54,7 @@ class FetchLatestTradePriceOperator(BaseOperator):
             crypto_df = df[df['market'] == crypto].copy()
             for iloc_range in iloc_ranges:
                 for rolling_window in rolling_windows:
-                    temp_df = crypto_df[['candle_date_time_kst','trade_price']].iloc[iloc_range:].copy()
+                    temp_df = crypto_df[['candle_date_time_kst','trade_price']].iloc[:iloc_range].copy()
                     temp_df['MA'] = temp_df['trade_price'].rolling(rolling_window).mean().shift(1)
                     temp_df['ACTION'] = np.where(temp_df['trade_price'] > temp_df['MA'], 'buy', 'sell')
 
@@ -93,7 +93,7 @@ class FetchLatestTradePriceOperator(BaseOperator):
             crypto_df = df[df['market'] == crypto].copy()
             for iloc_range in iloc_ranges:
                 for rolling_window in rolling_windows:
-                    temp_df = crypto_df[['candle_date_time_kst','trade_price']].iloc[iloc_range:].copy()
+                    temp_df = crypto_df[['candle_date_time_kst','trade_price']].iloc[:iloc_range].copy()
                     temp_df['MA'] = temp_df['trade_price'].rolling(rolling_window).mean().shift(1)
                     temp_df['ACTION'] = np.where(temp_df['trade_price'] > temp_df['MA'], 'buy', 'sell')
 
@@ -132,7 +132,7 @@ class FetchLatestTradePriceOperator(BaseOperator):
             crypto_df = df[df['market'] == crypto].copy()
             for iloc_range in iloc_ranges:
                 for rolling_window in rolling_windows:
-                    temp_df = crypto_df[['candle_date_time_kst','trade_price']].iloc[iloc_range:].copy()
+                    temp_df = crypto_df[['candle_date_time_kst','trade_price']].iloc[:iloc_range].copy()
                     temp_df['MA'] = temp_df['trade_price'].rolling(rolling_window).mean().shift(1)
                     temp_df['ACTION'] = np.where(temp_df['trade_price'] > temp_df['MA'], 'buy', 'sell')
 
