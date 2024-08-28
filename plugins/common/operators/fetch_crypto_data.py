@@ -55,9 +55,7 @@ class FetchLatestTradePriceOperator(BaseOperator):
             for iloc_range in iloc_ranges:
                 for rolling_window in rolling_windows:
                     temp_df = crypto_df[['candle_date_time_kst','trade_price']].iloc[:iloc_range].copy()
-                    ###
                     temp_df = temp_df.sort_values('candle_date_time_kst', ascending=True)
-                    ###
                     temp_df['MA'] = temp_df['trade_price'].rolling(rolling_window).mean().shift(1)
                     temp_df['ACTION'] = np.where(temp_df['trade_price'] > temp_df['MA'], 'buy', 'sell')
 
@@ -89,7 +87,7 @@ class FetchLatestTradePriceOperator(BaseOperator):
                                 'ma': [temp_df['MA'].iloc[-1]]
                             })
                             filter_buy_df = pd.concat([filter_buy_df, buy_row], ignore_index=True)
-                            #filter_buy_df = filter_buy_df.drop_duplicates(['crypto', '(n)ma'], keep='last').reset_index(drop=True)
+                            filter_buy_df = filter_buy_df.drop_duplicates(['crypto', '(n)ma'], keep='last').reset_index(drop=True)
 
         cryptos = df['market'].unique()
         for crypto in cryptos:
@@ -97,9 +95,7 @@ class FetchLatestTradePriceOperator(BaseOperator):
             for iloc_range in iloc_ranges:
                 for rolling_window in rolling_windows:
                     temp_df = crypto_df[['candle_date_time_kst','trade_price']].iloc[:iloc_range].copy()
-                    ###
                     temp_df = temp_df.sort_values('candle_date_time_kst', ascending=True)
-                    ###
                     temp_df['MA'] = temp_df['trade_price'].rolling(rolling_window).mean().shift(1)
                     temp_df['ACTION'] = np.where(temp_df['trade_price'] > temp_df['MA'], 'buy', 'sell')
 
@@ -131,7 +127,7 @@ class FetchLatestTradePriceOperator(BaseOperator):
                                 'ma': [temp_df['MA'].iloc[-1]]
                             })
                             filter_sell_df = pd.concat([filter_sell_df, sell_row], ignore_index=True)
-                            #filter_sell_df = filter_sell_df.drop_duplicates(['crypto', '(n)ma'], keep='last').reset_index(drop=True)          
+                            filter_sell_df = filter_sell_df.drop_duplicates(['crypto', '(n)ma'], keep='last').reset_index(drop=True)          
         
         cryptos = df['market'].unique()
         for crypto in cryptos:
@@ -139,9 +135,7 @@ class FetchLatestTradePriceOperator(BaseOperator):
             for iloc_range in iloc_ranges:
                 for rolling_window in rolling_windows:
                     temp_df = crypto_df[['candle_date_time_kst','trade_price']].iloc[:iloc_range].copy()
-                    ###
                     temp_df = temp_df.sort_values('candle_date_time_kst', ascending=True)
-                    ###
                     temp_df['MA'] = temp_df['trade_price'].rolling(rolling_window).mean().shift(1)
                     temp_df['ACTION'] = np.where(temp_df['trade_price'] > temp_df['MA'], 'buy', 'sell')
 
@@ -153,8 +147,6 @@ class FetchLatestTradePriceOperator(BaseOperator):
                     df_buy.columns = ['candle_date_time_kst','trade_price(buy)', 'MA', 'ACTION']
                     df_sell = temp_df[cond_sell].reset_index(drop=True)
                     df_sell.columns = ['candle_date_time_kst','trade_price(sell)', 'MA', 'ACTION']
-
-                    #filter_return_df = pd.DataFrame(columns=['crypto', '(n)ma', 'day', 'date', 'return(%)'])
 
                     df_result = pd.concat([df_buy, df_sell], axis=1)
                     df_result['return_rate'] = df_result['trade_price(sell)'] / df_result['trade_price(buy)']
