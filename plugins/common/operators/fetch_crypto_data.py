@@ -172,9 +172,6 @@ class FetchLatestTradePriceOperator(BaseOperator):
                             'return(%)': [f"{final_return:.1f}"]
                         })
                         filter_return_df = pd.concat([filter_return_df, return_row], ignore_index=True)
-                        #filter_return_df = filter_return_df.astype({'(n)ma': int, 'day': int})
-                        #filter_return_df['return(%)'] = filter_return_df['return(%)'].apply(lambda x: round(float(x), 1)).astype(float)
-                        #filter_return_df['date'] = filter_return_df['date'].apply(lambda x: x.to_timestamp() if isinstance(x, pd.Period) else x)
 
         if not filter_buy_df.empty:
             self.log.info(f"{filter_buy_df.to_string(index=False)}")
