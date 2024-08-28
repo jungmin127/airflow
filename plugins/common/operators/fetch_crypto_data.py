@@ -85,3 +85,7 @@ class FetchLatestTradePriceOperator(BaseOperator):
                             })
                             filter_buy_df = pd.concat([filter_buy_df, buy_row], ignore_index=True)
                             #filter_buy_df = filter_buy_df.drop_duplicates(['crypto', '(n)ma'], keep='last').reset_index(drop=True)
+        if not filter_buy_df.empty:
+            self.log.info(f"Filtered buy DataFrame:\n{filter_buy_df.to_string(index=False)}")
+        else:
+            self.log.info("No buy conditions met. Filtered buy DataFrame is empty.")
