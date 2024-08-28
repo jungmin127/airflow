@@ -179,12 +179,12 @@ class FetchLatestTradePriceOperator(BaseOperator):
         if not filter_buy_df.empty:
             self.log.info(f"{filter_buy_df.to_string(index=False)}")
         else:
-            self.log.info("조건을 만족하는 코인 없음") 
+            self.log.info(f"현재 기준, {crypto} 는 Buy 조건에 해당하지 않음") 
 
         if not filter_sell_df.empty:
             self.log.info(f"{filter_sell_df.to_string(index=False)}")
         else:
-            self.log.info("조건을 만족하는 코인 없음") 
+            self.log.info(f"현재 기준, {crypto} 는 Sell 조건에 해당하지 않음") 
 
         if not filter_return_df.empty:
             self.log.info(f"{filter_return_df.to_string(index=False)}")
