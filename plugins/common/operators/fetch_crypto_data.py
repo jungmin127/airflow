@@ -139,9 +139,11 @@ class FetchLatestTradePriceOperator(BaseOperator):
                     temp_df.iloc[-1, -1] = 'sell'
 
                     df_buy = temp_df[cond_buy].reset_index()
-                    df_buy.columns = ['candle_date_time_kst','trade_price(buy)', 'MA', 'ACTION']
+                    df_buy.columns = ['candle_date_time_kst','trade_price(buy)', 'MA', 'ACTION', 'unkown']
                     df_sell = temp_df[cond_sell].reset_index()
-                    df_sell.columns = ['candle_date_time_kst','trade_price(sell)', 'MA', 'ACTION']
+                    df_sell.columns = ['candle_date_time_kst','trade_price(sell)', 'MA', 'ACTION', 'unkown']
+
+                    #filter_return_df = pd.DataFrame(columns=['crypto', '(n)ma', 'day', 'date', 'return(%)'])
 
                     df_result = pd.concat([df_buy, df_sell], axis=1)
                     df_result['return_rate'] = df_result['trade_price(sell)'] / df_result['trade_price(buy)']
