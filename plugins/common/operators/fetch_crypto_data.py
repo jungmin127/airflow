@@ -9,11 +9,10 @@ import pytz
 from datetime import datetime, timedelta, timezone
 
 class FetchLatestTradePriceOperator(BaseOperator):
-    def __init__(self, table_name, postgres_conn_id, dash_api_url, **kwargs):
+    def __init__(self, table_name, postgres_conn_id, **kwargs):
         super().__init__(**kwargs)
         self.table_name = table_name
         self.postgres_conn_id = postgres_conn_id
-        self.dash_api_url = dash_api_url
 
     def get_conn(self):
         airflow_conn = BaseHook.get_connection(self.postgres_conn_id)
@@ -68,7 +67,6 @@ class FetchLatestTradePriceOperator(BaseOperator):
 
                         kst = pytz.timezone('Asia/Seoul')
                         last_day_buy_kst = last_day_buy.tz_localize(kst, ambiguous='NaT')
-                        #utc_time = datetime.utcnow()
                         utc_time = datetime.now(timezone.utc)
                         utc_time = pytz.utc.localize(utc_time)
                         kst_time = utc_time.astimezone(kst)
