@@ -62,7 +62,7 @@ class FetchLatestTradePriceOperator(BaseOperator):
                     #df_buy['datetime'] = crypto_df['candle_date_time_kst'].iloc[cond_buy].values
 
                     if not df_buy.empty:
-                        last_date_buy = df_buy.tail(1)['datetime'].values[0]
+                        last_date_buy = df_buy.tail(1)['candle_date_time_kst'].values[0]
                         last_day_buy = pd.to_datetime(last_day_buy)
 
                         kst = pytz.timezone('Asia/Seoul')
@@ -81,8 +81,8 @@ class FetchLatestTradePriceOperator(BaseOperator):
                                 'crypto': [crypto],
                                 '(n)ma': [rolling_window],
                                 'datetime': [last_date_buy],
-                                'close': [df_buy.tail(1)['close(buy)'].values[0]],
+                                'close': [df_buy.tail(1)['trade_price'].values[0]],
                                 'ma': [temp_df['MA'].iloc[-1]]
                             })
                             filter_buy_df = pd.concat([filter_buy_df, buy_row], ignore_index=True)
-                            filter_buy_df = filter_buy_df.drop_duplicates(['crypto', '(n)ma'], keep='last').reset_index(drop=True)
+                            #filter_buy_df = filter_buy_df.drop_duplicates(['crypto', '(n)ma'], keep='last').reset_index(drop=True)
