@@ -134,17 +134,17 @@ class FetchLatestTradePriceOperator(BaseOperator):
                     temp_df['MA'] = temp_df['trade_price'].rolling(rolling_window).mean().shift(1)
                     temp_df['ACTION'] = np.where(temp_df['trade_price'] > temp_df['MA'], 'buy', 'sell')
 
-                    cond_buy = (df['action'] == 'buy') & (df['action'].shift(1) == 'sell')
-                    cond_sell = (df['action'] == 'sell') & (df['action'].shift(1) == 'buy')
+                    cond_buy = (temp_df['action'] == 'buy') & (temp_df['action'].shift(1) == 'sell')
+                    cond_sell = (temp_df['action'] == 'sell') & (temp_df['action'].shift(1) == 'buy')
                     temp_df.iloc[-1, -1] = 'sell'
 
                     df_buy = df[cond_buy].reset_index()
-                    df_buy.columns = ['date(buy)', 'close(buy)', 'ma', 'action(buy)']
+                    df_buy.columns = ['candle_date_time_kst','trade_price(buy)', 'MA', 'ACTION']
                     df_sell = df[cond_sell].reset_index()
-                    df_sell.columns = ['date(sell)', 'close(sell)', 'ma', 'action(sell)']
+                    df_sell.columns = ['candle_date_time_kst','trade_price(sell)', 'MA', 'ACTION']
 
                     df_result = pd.concat([df_buy, df_sell], axis=1)
-                    df_result['return_rate'] = df_result['close(sell)'] / df_result['close(buy)']
+                    df_result['return_rate'] = df_result['trade_price(sell)'] / df_result['trade_price(buy)']
                     df_result = df_result.dropna()
 
                     kst = pytz.timezone('Asia/Seoul')
