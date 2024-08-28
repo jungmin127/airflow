@@ -55,6 +55,9 @@ class FetchLatestTradePriceOperator(BaseOperator):
             for iloc_range in iloc_ranges:
                 for rolling_window in rolling_windows:
                     temp_df = crypto_df[['candle_date_time_kst','trade_price']].iloc[:iloc_range].copy()
+                    ###
+                    temp_df = temp_df.sort_values('candle_date_time_kst', ascending=True)
+                    ###
                     temp_df['MA'] = temp_df['trade_price'].rolling(rolling_window).mean().shift(1)
                     temp_df['ACTION'] = np.where(temp_df['trade_price'] > temp_df['MA'], 'buy', 'sell')
 
@@ -94,6 +97,9 @@ class FetchLatestTradePriceOperator(BaseOperator):
             for iloc_range in iloc_ranges:
                 for rolling_window in rolling_windows:
                     temp_df = crypto_df[['candle_date_time_kst','trade_price']].iloc[:iloc_range].copy()
+                    ###
+                    temp_df = temp_df.sort_values('candle_date_time_kst', ascending=True)
+                    ###
                     temp_df['MA'] = temp_df['trade_price'].rolling(rolling_window).mean().shift(1)
                     temp_df['ACTION'] = np.where(temp_df['trade_price'] > temp_df['MA'], 'buy', 'sell')
 
@@ -133,6 +139,9 @@ class FetchLatestTradePriceOperator(BaseOperator):
             for iloc_range in iloc_ranges:
                 for rolling_window in rolling_windows:
                     temp_df = crypto_df[['candle_date_time_kst','trade_price']].iloc[:iloc_range].copy()
+                    ###
+                    temp_df = temp_df.sort_values('candle_date_time_kst', ascending=True)
+                    ###
                     temp_df['MA'] = temp_df['trade_price'].rolling(rolling_window).mean().shift(1)
                     temp_df['ACTION'] = np.where(temp_df['trade_price'] > temp_df['MA'], 'buy', 'sell')
 
