@@ -11,7 +11,7 @@ coins = [
 with DAG(
     dag_id='dags_output_dash',
     start_date=pendulum.datetime(2024, 8, 18, tz='Asia/Seoul'),
-    schedule='15 * * * *',  # Adjust the schedule as needed
+    schedule='15 * * * *',
     catchup=False
 ) as dag:
 
@@ -21,7 +21,6 @@ with DAG(
             task_id=f'buy_sell_return_dash_{coin.lower()}',
             table_name=coin,
             postgres_conn_id='conn-db-postgres-custom',
-            dash_api_url='http://127.0.0.1:8050/api/upload'
         )
         tasks.append(task)
 
