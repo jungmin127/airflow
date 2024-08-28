@@ -68,7 +68,6 @@ class FetchLatestTradePriceOperator(BaseOperator):
                         kst = pytz.timezone('Asia/Seoul')
                         last_date_buy_kst = last_date_buy.tz_localize(kst, ambiguous='NaT')
                         utc_time = datetime.now(timezone.utc)
-                        utc_time = pytz.utc.localize(utc_time)
                         kst_time = utc_time.astimezone(kst)
 
                         def get_previous_hour(dt):
