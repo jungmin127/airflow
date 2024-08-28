@@ -134,8 +134,8 @@ class FetchLatestTradePriceOperator(BaseOperator):
                     temp_df['MA'] = temp_df['trade_price'].rolling(rolling_window).mean().shift(1)
                     temp_df['ACTION'] = np.where(temp_df['trade_price'] > temp_df['MA'], 'buy', 'sell')
 
-                    cond_buy = (temp_df['action'] == 'buy') & (temp_df['action'].shift(1) == 'sell')
-                    cond_sell = (temp_df['action'] == 'sell') & (temp_df['action'].shift(1) == 'buy')
+                    cond_buy = (temp_df['ACTION'] == 'buy') & (temp_df['ACTION'].shift(1) == 'sell')
+                    cond_sell = (temp_df['ACTION'] == 'sell') & (temp_df['ACTION'].shift(1) == 'buy')
                     temp_df.iloc[-1, -1] = 'sell'
 
                     df_buy = df[cond_buy].reset_index()
