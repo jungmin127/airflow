@@ -59,7 +59,7 @@ class FetchLatestTradePriceOperator(BaseOperator):
                     cond_buy = (temp_df['ACTION'] == 'buy') & (temp_df['ACTION'].shift(1) == 'sell')
                     df_buy = temp_df[cond_buy].reset_index(drop=True)
                     df_buy.columns = ['candle_date_time_kst','trade_price', 'MA', 'ACTION']
-                    df_buy['datetime'] = crypto_df['candle_date_time_kst'].iloc[cond_buy].values
+                    #df_buy['datetime'] = crypto_df['candle_date_time_kst'].iloc[cond_buy].values
 
                     if not df_buy.empty:
                         last_date_buy = df_buy.tail(1)['datetime'].values[0]
