@@ -11,7 +11,7 @@ coins = [
 with DAG(
     dag_id='dags_output_dash',
     start_date=pendulum.datetime(2024, 8, 18, tz='Asia/Seoul'),
-    schedule='15 * * * *',
+    schedule='5 * * * *',
     catchup=False
 ) as dag:
 
