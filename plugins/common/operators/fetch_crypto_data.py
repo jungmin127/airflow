@@ -138,9 +138,9 @@ class FetchLatestTradePriceOperator(BaseOperator):
                     cond_sell = (temp_df['ACTION'] == 'sell') & (temp_df['ACTION'].shift(1) == 'buy')
                     temp_df.iloc[-1, -1] = 'sell'
 
-                    df_buy = df[cond_buy].reset_index()
+                    df_buy = temp_df[cond_buy].reset_index()
                     df_buy.columns = ['candle_date_time_kst','trade_price(buy)', 'MA', 'ACTION']
-                    df_sell = df[cond_sell].reset_index()
+                    df_sell = temp_df[cond_sell].reset_index()
                     df_sell.columns = ['candle_date_time_kst','trade_price(sell)', 'MA', 'ACTION']
 
                     df_result = pd.concat([df_buy, df_sell], axis=1)
