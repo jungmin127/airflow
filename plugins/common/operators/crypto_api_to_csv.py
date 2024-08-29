@@ -34,7 +34,7 @@ class CryptoToCSVOperator(BaseOperator):
                 combined_df = df
 
             combined_df.to_csv(file_path, encoding='utf-8', index=False)
-            self.log.info(f"데이터프레임을 CSV 파일로 저장: {file_path}")
+            self.log.info(f"데이터프레임을 CSV 로 저장: {file_path}")
         else:
             self.log.error('API 호출 결과 없음')
 
@@ -48,12 +48,12 @@ class CryptoToCSVOperator(BaseOperator):
         }
 
         response = requests.get(base_url, headers=headers)
-        self.log.info(f"API 응답 내용: {response.text}")
+        self.log.info(f"API 응답: {response.text}")
 
         if response.status_code == 200:
             contents = response.json()
             self.log.info(f"API 응답 데이터: {contents}")
             return contents
         else:
-            self.log.error(f"API 호출 실패. Status code: {response.status_code}")
+            self.log.error(f"API 호출 실패 코드: {response.status_code}")
             return []
